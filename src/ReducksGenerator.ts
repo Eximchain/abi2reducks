@@ -6,10 +6,14 @@ const shell = require('shelljs');
 let path = require("path");
 let fs = require("fs");
 
+export type ReducksInput = {
+    name: string,
+    abi: MethodAbi[]
+}
 
-class ReducksGenerator {
+export class ReducksGenerator {
 
-    constructor(name:string, abi:MethodAbi[]){
+    constructor({name, abi}:ReducksInput){
         //NOTE: make a duck factory 
         this.ducksGenerator = new DucksGenerator()
         //NOTE: set default directories, etc.

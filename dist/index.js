@@ -36,7 +36,7 @@
         console.log();
         //fetch the contract ABI and filter out any functions listed
         var abiMethods = JSON.parse(fs.readFileSync(contract_path)).filter(function (fxn) { return fxn.type === 'function'; });
-        var reducks = new ReducksGenerator_1.default(contract_name, abiMethods);
+        var reducks = new ReducksGenerator_1.default({ name: contract_name, abi: abiMethods });
         //TODO: generate file/folder structure (index.ts)
         //TODO: generate input types for each function (types.ts & constants.ts)
         //TODO: generate state type to know the shape we're talking about (reducers.ts)
@@ -57,6 +57,9 @@
         else {
             program.parse(process.argv);
         }
+    }
+    else {
+        module.exports.default = ReducksGenerator_1.default;
     }
 });
 //# sourceMappingURL=index.js.map

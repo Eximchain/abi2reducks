@@ -39,7 +39,7 @@ program
         const abiMethods = JSON.parse(
             fs.readFileSync(contract_path)
         ).filter((fxn:AbiDefinition) => fxn.type === 'function');
-        const reducks = new ReducksGenerator(contract_name, abiMethods);
+        const reducks = new ReducksGenerator({name: contract_name, abi: abiMethods});
         //TODO: generate file/folder structure (index.ts)
         //TODO: generate input types for each function (types.ts & constants.ts)
         //TODO: generate state type to know the shape we're talking about (reducers.ts)
@@ -62,5 +62,5 @@ if (require.main === module){
         program.parse(process.argv);
     }
 } else {
-    module.exports = ReducksGenerator;
+    module.exports.default = ReducksGenerator;
 }

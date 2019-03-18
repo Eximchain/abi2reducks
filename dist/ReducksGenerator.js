@@ -15,7 +15,8 @@
     var path = require("path");
     var fs = require("fs");
     var ReducksGenerator = /** @class */ (function () {
-        function ReducksGenerator(name, abi) {
+        function ReducksGenerator(_a) {
+            var name = _a.name, abi = _a.abi;
             var _this = this;
             this.initReducks = function () {
                 // cd into directory and create folder for each ABI method
@@ -65,6 +66,7 @@
         };
         return ReducksGenerator;
     }());
+    exports.ReducksGenerator = ReducksGenerator;
     function camelCase(input) {
         return input.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
             return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
