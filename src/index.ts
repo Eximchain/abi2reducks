@@ -61,4 +61,6 @@ if (require.main === module){
     } else {
         program.parse(process.argv);
     }
+} else {
+    module.exports = ReducksGenerator;
 }
