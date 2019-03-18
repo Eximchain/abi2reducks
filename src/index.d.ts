@@ -32,9 +32,4 @@ declare namespace ReducksGenerator {
         name: string,
         abi: MethodAbi[]
     }
-
-    export interface ReducksGenerator {
-        constructor(args:ReducksGenerator.ReducksInput)
-        generate: ()=>void
-    }
 }
