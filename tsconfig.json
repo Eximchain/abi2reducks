@@ -11,6 +11,7 @@
         "alwaysStrict": true,        // Enable JavaScript's "use strict" mode
         "types" : ["node"],
         "outDir": "dist",
-        "sourceRoot": "src"
+        "sourceRoot": "src",
+        "suppressImplicitAnyIndexErrors": true
       }
 }
