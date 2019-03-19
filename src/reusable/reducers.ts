@@ -1,7 +1,7 @@
 import { MethodAbi } from 'ethereum-types';
 const merge = require('lodash.merge');
-import { WriteActionTypes, WriteAction, ReadAction, ReadActionTypes } from './actions';
-import { NumberTypeStrings, ByteTypeStrings } from './types';
+import { actionNames } from './actions';
+import { NumberTypeStrings, ByteTypeStrings, buildInputTypeMap, cleanTypedValue, validateTypedValue, Action } from './types';
 
 const initialStateFromTypes = (fxn:MethodAbi) => {
     return { 
@@ -26,69 +26,40 @@ const initialStateFromTypes = (fxn:MethodAbi) => {
 
             state[fieldName] = initialValue;
             return state;
-        }, {}) 
+        }, {}),
+        error : null
     };
 }
 
-const writeReducerFactory = (fxn: MethodAbi) => {
+export const fxnReducer = (fxn: MethodAbi) => {
     const initialState = initialStateFromTypes(fxn);
-    return (state=initialState, {type,payload}:WriteAction) => {
-        switch (type){
-            case (WriteActionTypes.SET):
-                let newParamVal = {};
-                // TODO: Incorporate type checking on new value
-                newParamVal[payload.fieldName] = payload.value;
-                // Note the spread operator, which expands the underlying
-                // object so the value of `params` is the contents of 
-                // newParamVal.
-                return merge({}, state, { 
-                    params : { ...newParamVal } 
-                });
-            case (WriteActionTypes.START_SIGN):
-                return merge({}, state, { 
-                    signing: true 
-                })
-            case (WriteActionTypes.RECEIVE_SIGN):
-                return merge({}, state, { 
-                    signing: false, 
-                    signature: payload.signature 
-                })
-            case (WriteActionTypes.SUBMIT):
-                return merge({}, state, { 
-                    submitting : true 
-                });
-            case (WriteActionTypes.RECEIPT):
-                return merge({}, state, { 
-                    submitting : false, 
-                    receipt : payload.receipt,
-                    params : initialState.params
-                })
-            case (WriteActionTypes.ERROR):
-                return merge({}, state, {
-                    submitting : false,
-                    error : payload.error
-                })
+    const typesByField = buildInputTypeMap(fxn);
+    const actions = actionNames(fxn);
+    return (state=initialState, { type, payload}:Action) => {
+        switch(type){
+            case (actions.SET):
+                let newVal = {};
+                const { fieldName, value } = payload;
+                const [cleanVal, error] = cleanTypedValue(fieldName, typesByField[fieldName], value);
+                newVal[fieldName] = cleanVal;
+                if (error){
+                    return merge({}, state, { error })
+                } else {
+                    return merge({}, state, { params : { ...newVal }, error: null });
+                }
+            case (actions.SUBMIT):
+                const errors = Object.keys(state.params).reduce((errs:string[], name:string)=>{
+                    let err = validateTypedValue(name, typesByField[name], state.params[name]);
+                    if (err !== null) errs.push(err.toString());
+                    return errs;
+                }, []);
+                if (errors.length > 0){
+                    return merge({}, state, { error: errors })
+                } else {
+                    return merge({}, initialState);
+                }
             default:
                 return state;
-        }
-    }
-}
-
-const readReducerFactory = (fxn: MethodAbi) => {
-    const initialState = initialStateFromTypes(fxn);
-    return (state=initialState, {type,payload}:ReadAction) => {
-        switch (type){
-            case (ReadActionTypes.SET):
-                let newParamVal = {};
-                // TODO: Incorporate type checking
-                newParamVal[payload.fieldName] = payload.value;
-                return merge({}, state, { 
-                    params : { ...newParamVal }
-                });
-            case (ReadActionTypes.RESULT):
-                return merge({}, state, { 
-                    result : payload.result 
-                });
         }
     }
 }

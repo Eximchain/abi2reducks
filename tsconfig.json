@@ -9,7 +9,7 @@
         "jsx": "react",             // Causes inline XML (JSX code) to be expanded
         "strict": true,             // Strict types, eg. prohibits `var x=0; x=null`
         "alwaysStrict": true,        // Enable JavaScript's "use strict" mode
-        "types" : ["node"],
+        "types" : ["node", "web3", "lodash"],
         "outDir": "dist",
         "sourceRoot": "src",
         "suppressImplicitAnyIndexErrors": true

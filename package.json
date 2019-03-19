@@ -7,8 +7,9 @@
   "dependencies": {
     "@types/lodash": "^4.14.123",
     "@types/node": "^11.11.3",
-    "typescript": "^3.3.3333",
+    "@types/web3": "^1.0.18",
     "abi2lib": "^0.2.13",
+    "bignumber.js": "^8.1.1",
     "commander": "^2.19.0",
     "ethereum-types": "^2.1.0",
     "lodash.camelcase": "^4.3.0",
@@ -17,7 +18,9 @@
     "redux-react-hook": "^3.2.0",
     "redux-starter-kit": "^0.4.3",
     "shelljs": "^0.8.3",
-    "web3": "^1.0.0-beta.48"
+    "typescript": "^3.3.3333",
+    "web3": "^1.0.0-beta.48",
+    "web3-utils": "^1.0.0-beta.48"
   },
   "devDependencies": {},
   "scripts": {

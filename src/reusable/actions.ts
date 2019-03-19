@@ -1,4 +1,12 @@
 import {} from 'redux';
+import { MethodAbi } from 'ethereum-types';
+
+export const actionNames = (fxn:MethodAbi) => {
+    return {
+        SET : `fxn/${fxn.name}/set`,
+        SUBMIT: `fxn/${fxn.name}/submit`
+    }
+}
 
 export enum WriteActionTypes {
     SET = 'SET_FIELD',
