@@ -15,7 +15,7 @@ var __assign = (this && this.__assign) || function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./actions", "./types"], factory);
+        define(["require", "exports", "./actions", "./types", "../util"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -23,6 +23,14 @@ var __assign = (this && this.__assign) || function () {
     var merge = require('lodash.merge');
     var actions_1 = require("./actions");
     var types_1 = require("./types");
+    var util_1 = require("../util");
+    /**
+     * Given an ABI method, returns a default fxnReducer state
+     * based on the method's inputs.  All non-bool values are
+     * actually strings.  Starts with an error key set to null.
+     *
+     * @param fxn
+     */
     var initialStateFromTypes = function (fxn) {
         return {
             params: fxn.inputs.reduce(function (state, input, i) {
@@ -53,9 +61,18 @@ var __assign = (this && this.__assign) || function () {
             error: null
         };
     };
+    /**
+     * Factory to produce a reducer for one ABI method.
+     * It accepts SET and SUBMIT actions, maintaining and
+     * type-checking each parameter.  If there are type
+     * errors, it updates an `error` field to either an
+     * error string or an array of them.
+     *
+     * @param fxn:MethodAbi
+     */
     exports.fxnReducer = function (fxn) {
         var initialState = initialStateFromTypes(fxn);
-        var typesByField = types_1.buildInputTypeMap(fxn);
+        var typesByField = util_1.buildInputTypeMap(fxn);
         var actions = actions_1.actionNames(fxn);
         return function (state, _a) {
             if (state === void 0) { state = initialState; }
@@ -63,8 +80,8 @@ var __assign = (this && this.__assign) || function () {
             switch (type) {
                 case (actions.SET):
                     var newVal = {};
-                    var fieldName = payload.fieldName, value = payload.value;
-                    var _b = types_1.cleanTypedValue(fieldName, typesByField[fieldName], value), cleanVal = _b[0], error = _b[1];
+                    var _b = payload, fieldName = _b.fieldName, value = _b.value;
+                    var _c = util_1.cleanTypedValue(fieldName, typesByField[fieldName], value), cleanVal = _c[0], error = _c[1];
                     newVal[fieldName] = cleanVal;
                     if (error) {
                         return merge({}, state, { error: error });
@@ -74,7 +91,7 @@ var __assign = (this && this.__assign) || function () {
                     }
                 case (actions.SUBMIT):
                     var errors = Object.keys(state.params).reduce(function (errs, name) {
-                        var err = types_1.validateTypedValue(name, typesByField[name], state.params[name]);
+                        var err = util_1.validateTypedValue(name, typesByField[name], state.params[name]);
                         if (err !== null)
                             errs.push(err.toString());
                         return errs;

@@ -1,5 +1,4 @@
 import { MethodAbi } from 'ethereum-types';
-import { fxnSignature } from '../reusable/types';
 
 export enum VoteParams {
     _voted_for = '_voted_for',

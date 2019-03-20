@@ -1,15 +1,3 @@
-import { MethodAbi } from "ethereum-types";
-import * as web3Utils from 'web3-utils';
-const BigNum = require('bignumber.js');
-
-export enum InputTypes {
-    Address,
-    Boolean,
-    Bytes,
-    Number,
-    String
-}
-
 export enum Bytes {
     dynamic = "bytes",
     size1 = "bytes1",
@@ -47,8 +35,6 @@ export enum Bytes {
 }
 
 export const ByteTypeStrings = Object.values(Bytes);
-
-export type NumberTypes = Uints | Ints;
 
 export enum Uints {
     base = "uint",
@@ -122,11 +108,24 @@ export enum Ints {
     size256 = "int256"
 }
 
+export type NumberTypes = Uints | Ints;
+
+export const NumberTypeStrings = Object.values(Uints).concat(Object.values(Ints));
+
+type ParamValue = boolean | string
+
+type MethodParams = { [name:string] : ParamValue }
+
 export type FxnState = {
-    params : any
+    params : MethodParams
     error : string[] | string | null
     value? : string
     result? : any
+}
+
+export type SetParamPayload = {
+    fieldName: string
+    value: ParamValue
 }
 
 export type Action = {
@@ -134,132 +133,12 @@ export type Action = {
     payload: any
 }
 
-export const NumberTypeStrings = Object.values(Uints).concat(Object.values(Ints));
-
-export const selectNumberType:(type:string)=>NumberTypes = (type:string) => {
-    if (type.charAt(0) === 'u'){
-        return Uints[type];
-    } else if (type.charAt(0) === 'i'){
-        return Ints[type];
-    } else {
-        throw new Error(`selectNumberType got a value it wasn't prepared for: ${type}`);
-    }
+enum OtherSolTypes {
+    address = "address",
+    bool = "bool",
+    string = "string"
 }
 
-export const selectInputType = (type:string) => {
-    if (Object.values(NumberTypeStrings).includes(type)){
-        return InputTypes.Number;
-    } else if (Object.values(ByteTypeStrings).includes(type)){
-        return InputTypes.Bytes;
-    } else {
-        switch (type) {
-            case ('bool'):
-                return InputTypes.Boolean;
-            case ('string'):
-                return InputTypes.String;
-            case ('address'):
-                return InputTypes.Address;
-            default:
-                throw new Error(`selectFieldType received a value it did not not how to handle: ${type}`);
-        }
-    }
-}
+export type SolidityTypes = Uints | Ints | Bytes | OtherSolTypes;
 
-export const buildInputTypeMap = (fxn:MethodAbi) => {
-    return fxn.inputs.reduce((typeMap, {name, type}) => {
-        typeMap[name] = type;
-        return typeMap;
-    }, {})
-}
-
-export const cleanTypedValue:(name:string,type:string,value:any)=>[any,string|null] = (type:string, value:any) => {
-    if (Object.values(NumberTypeStrings).includes(type)){
-        return [value.replace(/\D/g, ''), null];
-    } else if (Object.values(ByteTypeStrings).includes(type)){
-        if (web3Utils.isHexStrict(value)){
-            return [value, null]
-        } else {
-            return [null, `${name} is byte data which must be encoded in hex, beginning with an 0x.`];
-        }
-    } else {
-        switch (type) {
-            case ('bool'):
-                if (typeof value === 'boolean'){
-                    return [value, null]
-                } else {
-                    return [null, `Provided value for ${name} was not a boolean.`]
-                }
-            case ('string'):
-                if (typeof value === 'string'){
-                    return [value, null]
-                } else {
-                    return [null, `Provided value for ${name} was not a string.`];
-                }
-            case ('address'):
-                if (typeof value !== 'string'){
-                    return [null, `Provided value for ${name} was not a string.`];
-                } else if (value.length >= 2 && value.slice(0,2) !== '0x') {
-                    return [null, `${name} is an address and must begin with 0x.`]
-                } else if (value.length > 42) {
-                    return [null, `${name} is an address; it is only 42 characters long, not ${value.length}.`];
-                } else {
-                    return [value, null]
-                }
-            default:
-                throw new Error(`selectFieldType received a value it did not not how to handle: ${type}`);
-        }
-    }
-}
-
-export const validateTypedValue:(name:string, type:string,value:any)=>string | null = (name, type, value) => {
-    if (Object.values(NumberTypeStrings).includes(type)){
-        // validateNumber fxn to determine whether the size is appropriate.
-        return validateNumber(name,type,value);
-    } else if (Object.values(ByteTypeStrings).includes(type)){
-        return web3Utils.isHexStrict(value) ? null : `${name} bytes must be encoded in hex, beginning with an 0x.`
-    } else {
-        switch (type) {
-            case ('bool'):
-                return typeof value === 'boolean' ? null : `${name} must be boolean, true or false.`
-            case ('string'):
-                return typeof value === 'string' ? null : `${name} must be a string, type was instead ${typeof value}.`;
-            case ('address'):
-                if (typeof value !== 'string') return `${name} must be an address string, type was instead ${typeof value}.`
-                if (value.length !== 42 || value.slice(0,2) !== '0x') {
-                    return `${name} must be a hex address; 42 characters total, beginning with 0x.`
-                }
-                if (web3Utils.isAddress(value.toLowerCase())){
-                    return null;
-                } else {
-                    return `${name} was not a valid address, double-check you wrote it correctly.`
-                }
-            default:
-                throw new Error(`selectFieldType received a value it did not not how to handle: ${type}`);
-        }
-    }
-}
-
-const validateNumber:(name:string,type:string,value:any)=>string | null = (name,type,value)=>{
-    if (typeof value !== 'string'){
-        return `${name} was not a string, its type was instead: ${value}.`;
-    } else {
-        const isSigned = type.charAt(0) === 'i';
-        const numBits = /[0-9]/.test(type) ? parseInt(isSigned ? type.slice(3) : type.slice(4)) : 256;
-        if (Object.values(Uints).includes(type)){
-            let maxVal = new BigNum(2).exponentiatedBy(numBits);
-            let val = new BigNum(value);
-            return val.gte(0) && val.lte(maxVal) ? null : `${name} only accepts numbers between 0 and ${maxVal.toString()}.`
-        } else if (Object.values(Ints).includes(type)){
-            let maxMagnitude = new BigNum(2).exponentiatedBy(numBits - 1);
-            let val = new BigNum(value);
-            return val.gte(maxMagnitude.negated()) && val.lte(maxMagnitude) ? null : `${name} only accepts numbers between -${maxMagnitude} and ${maxMagnitude}.`;
-        } else {
-            return `validateNumber was given an unknown type for ${name}: ${type}`;
-        }
-    }
-}
-
-export const fxnSignature = (fxn:MethodAbi) => {
-    let paramTypes = fxn.inputs.map(({type})=>type)
-    return `${fxn.name}(${paramTypes.join(',')})`
-}
+export type InputMap = { [name:string] : SolidityTypes }

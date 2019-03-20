@@ -1,9 +1,21 @@
 import { MethodAbi } from 'ethereum-types';
 const merge = require('lodash.merge');
 import { actionNames } from './actions';
-import { NumberTypeStrings, ByteTypeStrings, buildInputTypeMap, cleanTypedValue, validateTypedValue, Action } from './types';
+import { 
+    NumberTypeStrings, ByteTypeStrings, Action, FxnState, SetParamPayload
+} from './types';
+import {
+    buildInputTypeMap, cleanTypedValue, validateTypedValue
+} from '../util';
 
-const initialStateFromTypes = (fxn:MethodAbi) => {
+/**
+ * Given an ABI method, returns a default fxnReducer state
+ * based on the method's inputs.  All non-bool values are
+ * actually strings.  Starts with an error key set to null.
+ * 
+ * @param fxn 
+ */
+const initialStateFromTypes:(fxn:MethodAbi)=>FxnState = (fxn:MethodAbi) => {
     return { 
         params : fxn.inputs.reduce((state, input, i) => {
             let { type, name } = input;
@@ -31,15 +43,24 @@ const initialStateFromTypes = (fxn:MethodAbi) => {
     };
 }
 
+/**
+ * Factory to produce a reducer for one ABI method.
+ * It accepts SET and SUBMIT actions, maintaining and
+ * type-checking each parameter.  If there are type
+ * errors, it updates an `error` field to either an
+ * error string or an array of them.
+ * 
+ * @param fxn:MethodAbi
+ */
 export const fxnReducer = (fxn: MethodAbi) => {
     const initialState = initialStateFromTypes(fxn);
     const typesByField = buildInputTypeMap(fxn);
     const actions = actionNames(fxn);
-    return (state=initialState, { type, payload}:Action) => {
+    return (state=initialState, { type, payload }:Action) => {
         switch(type){
             case (actions.SET):
                 let newVal = {};
-                const { fieldName, value } = payload;
+                const { fieldName, value } = <SetParamPayload> payload;
                 const [cleanVal, error] = cleanTypedValue(fieldName, typesByField[fieldName], value);
                 newVal[fieldName] = cleanVal;
                 if (error){
