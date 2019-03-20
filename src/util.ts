@@ -91,7 +91,9 @@ const validateNumber:(name:string,type:string,value:any)=>string | null = (name,
         return `${name} was not a string, its type was instead: ${value}.`;
     } else {
         const isSigned = type.charAt(0) === 'i';
-        const numBits = /[0-9]/.test(type) ? parseInt(isSigned ? type.slice(3) : type.slice(4)) : 256;
+        const numBits = /[0-9]/.test(type) ? 
+            parseInt(isSigned ? type.slice(3) : type.slice(4)) : 
+            256;
         if (Object.values(Uints).includes(type)){
             let maxVal = new BigNum(2).exponentiatedBy(numBits);
             let val = new BigNum(value);

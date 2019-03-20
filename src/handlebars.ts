@@ -1,7 +1,7 @@
 import {DataItem} from 'ethereum-types';
 let Handlebars = require("handlebars");
 
-
+export const pascalCase = (input:string) => input.replace(/(\w)(\w*)/g, function(g0,g1,g2){return g1.toUpperCase() + g2.toLowerCase();});
 
 Handlebars.registerHelper({
    
@@ -18,7 +18,7 @@ Handlebars.registerHelper({
         }).replace(/\s+/g, '');
     },
     pascalCase(input: string){
-        return input.replace(/(\w)(\w*)/g, function(g0,g1,g2){return g1.toUpperCase() + g2.toLowerCase();});
+        return pascalCase(input)
     },
     inputList(inputs:DataItem[]){
         return inputs.map(input => input.name !== "" ? input.name : input.type).join(', ');
@@ -26,6 +26,9 @@ Handlebars.registerHelper({
     inputSpread(inputs:DataItem[]){
         if (inputs.length > 0) return ', '+inputs.map(input => input.name !== "" ? input.name : input.type).join(', ');
         return '';
+    },
+    solToJSType(input:string){
+        return input === 'bool' ? 'boolean' : 'string';
     }
 });
 

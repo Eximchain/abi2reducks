@@ -1,4 +1,3 @@
-import {} from 'redux';
 import { MethodAbi } from 'ethereum-types';
 
 /**
@@ -6,11 +5,11 @@ import { MethodAbi } from 'ethereum-types';
  * with SET & SUBMIT action names which are scoped
  * to the method.
  * 
- * @param fxn:MethodAbi
+ * @param method:MethodAbi
  */
-export const actionNames = (fxn:MethodAbi) => {
+export const actionNames = (method:MethodAbi) => {
     return {
-        SET : `fxn/${fxn.name}/set`,
-        SUBMIT: `fxn/${fxn.name}/submit`
+        SET : `method/${method.name}/set`,
+        SUBMIT: `method/${method.name}/submit`
     }
 }

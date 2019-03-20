@@ -1,6 +1,6 @@
 import { VoteFxn } from './types';
-import { getDataFactory } from '../reusable/selectors';
+import { dataSelectorFactory } from '../reusable/selectors';
 
-const getVoteData = getDataFactory(VoteFxn);
+const getVoteData = dataSelectorFactory(VoteFxn);
 
 export { getVoteData }

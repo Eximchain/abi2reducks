@@ -116,10 +116,9 @@ export type ParamValue = boolean | string
 
 type MethodParams = { [name:string] : ParamValue }
 
-export type FxnState = {
+export type MethodState = {
     params : MethodParams
     error : string[] | string | null
-    value? : string
     result? : any
 }
 

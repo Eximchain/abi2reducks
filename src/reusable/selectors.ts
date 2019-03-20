@@ -1,5 +1,5 @@
 import { MethodAbi } from 'ethereum-types';
-import { FxnState } from './types';
+import { MethodState } from './types';
 import Contract from '../GeneratedContract';
 
 /**
@@ -8,13 +8,13 @@ import Contract from '../GeneratedContract';
  * which accepts a FxnState object and returns the function's data field
  * with the given parameters.
  * 
- * @param fxn:MethodAbi 
+ * @param method:MethodAbi 
  */
-export const getDataFactory = (fxn:MethodAbi) => {
-    let paramTypes = fxn.inputs.map(({type})=>type)
-    let methodName = `${fxn.name}(${paramTypes.join(',')})`;
-    return (state:FxnState) => {
-        return Contract.methods[methodName](...fxn.inputs.map(
+export const dataSelectorFactory = (method:MethodAbi) => {
+    let paramTypes = method.inputs.map(({type})=>type)
+    let methodName = `${method.name}(${paramTypes.join(',')})`;
+    return (state:MethodState) => {
+        return Contract.methods[methodName](...method.inputs.map(
             ({name})=>{ state.params[name] }
         )).encodeABI();
     }

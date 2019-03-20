@@ -1,6 +1,6 @@
-import { fxnReducer } from '../reusable/reducers';
+import { methodReducer } from '../reusable/reducers';
 import { VoteFxn } from './types';
 
-export const VoteReducer = fxnReducer(VoteFxn);
+export const VoteReducer = methodReducer(VoteFxn);
 
 export default VoteReducer;

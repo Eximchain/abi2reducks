@@ -2,7 +2,7 @@ import { MethodAbi } from 'ethereum-types';
 const merge = require('lodash.merge');
 import { actionNames } from './actions';
 import { 
-    NumberTypeStrings, ByteTypeStrings, Action, FxnState, SetParamPayload
+    NumberTypeStrings, ByteTypeStrings, Action, MethodState, SetParamPayload
 } from './types';
 import {
     buildInputTypeMap, cleanTypedValue, validateTypedValue
@@ -13,11 +13,11 @@ import {
  * based on the method's inputs.  All non-bool values are
  * actually strings.  Starts with an error key set to null.
  * 
- * @param fxn 
+ * @param method 
  */
-const initialStateFromTypes:(fxn:MethodAbi)=>FxnState = (fxn:MethodAbi) => {
+const initialStateFromTypes:(method:MethodAbi)=>MethodState = (method:MethodAbi) => {
     return { 
-        params : fxn.inputs.reduce((state, input, i) => {
+        params : method.inputs.reduce((state, input, i) => {
             let { type, name } = input;
             let fieldName = name || `arg${i}`;
             let initialValue;
@@ -50,22 +50,22 @@ const initialStateFromTypes:(fxn:MethodAbi)=>FxnState = (fxn:MethodAbi) => {
  * errors, it updates an `error` field to either an
  * error string or an array of them.
  * 
- * @param fxn:MethodAbi
+ * @param method:MethodAbi
  */
-export const fxnReducer = (fxn: MethodAbi) => {
-    const initialState = initialStateFromTypes(fxn);
-    const typesByField = buildInputTypeMap(fxn);
-    const actions = actionNames(fxn);
+export const methodReducer = (method: MethodAbi) => {
+    const initialState = initialStateFromTypes(method);
+    const typesByField = buildInputTypeMap(method);
+    const actions = actionNames(method);
     return (state=initialState, { type, payload }:Action) => {
         switch(type){
             case (actions.SET):
-                let newVal = {};
                 const { fieldName, value } = <SetParamPayload> payload;
                 const [cleanVal, error] = cleanTypedValue(fieldName, typesByField[fieldName], value);
-                newVal[fieldName] = cleanVal;
                 if (error){
                     return merge({}, state, { error })
                 } else {
+                    let newVal = {};
+                    newVal[fieldName] = cleanVal;
                     return merge({}, state, { params : { ...newVal }, error: null });
                 }
             case (actions.SUBMIT):

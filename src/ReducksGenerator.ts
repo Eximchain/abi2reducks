@@ -57,6 +57,11 @@ export class ReducksGenerator {
         });
     }
 
+    // TODO: Write out the contract file
+    private writeContract = () => {
+        
+    }
+
     private writeReducksIndex = () =>{
         let export_index_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/reducks_export_index_template.hbs")));
         this.export_index_code = Handlebars.compile(export_index_template)({

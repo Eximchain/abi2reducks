@@ -1,0 +1,6 @@
+import { {{ titleName }}Fxn } from './types';
+import { dataSelectorFactory } from '../reusable/selectors';
+
+const get{{ titleName }}Data = dataSelectorFactory({{ titleName }}Fxn);
+
+export { get{{ titleName }}Data }

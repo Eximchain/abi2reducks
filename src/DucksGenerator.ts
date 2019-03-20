@@ -1,6 +1,6 @@
 
 import {MethodAbi} from 'ethereum-types';
-import Handlebars from './handlebars'
+import Handlebars, { pascalCase } from './handlebars'
 const shell = require('shelljs');
 let path = require("path");
 let fs = require("fs");
@@ -24,10 +24,11 @@ class DucksGenerator {
         
         shell.cd(name);
 
-        let ducks_index_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_index_template.hbs")));
+        let ducks_index_template = String(fs.readFileSync(path.resolve(__dirname, "./templateDuck/index_template.hbs")));
         this.duck_index_code = Handlebars.compile(ducks_index_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_index_path = path.join(process.cwd(), `/index.ts`);
         fs.writeFileSync(duck_index_path, this.duck_index_code);
@@ -36,10 +37,11 @@ class DucksGenerator {
     public writeDuckActions = (name:string, method:MethodAbi) => {
         shell.cd(name);
 
-        let ducks_actions_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_actions_template.hbs")));
+        let ducks_actions_template = String(fs.readFileSync(path.resolve(__dirname, "./templateDuck/actions_template.hbs")));
         this.duck_actions_code = Handlebars.compile(ducks_actions_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_actions_path = path.join(process.cwd(), `/actions.ts`);
         fs.writeFileSync(duck_actions_path, this.duck_actions_code);
@@ -48,10 +50,11 @@ class DucksGenerator {
     public writeDuckReducers = (name:string, method:MethodAbi) => {
         shell.cd(name);
 
-        let ducks_reducers_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_reducers_template.hbs")));
+        let ducks_reducers_template = String(fs.readFileSync(path.resolve(__dirname, "./templateDuck/reducers_template.hbs")));
         this.duck_reducers_code = Handlebars.compile(ducks_reducers_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_reducers_path = path.join(process.cwd(), `/reducers.ts`);
         fs.writeFileSync(duck_reducers_path, this.duck_reducers_code);
@@ -60,10 +63,11 @@ class DucksGenerator {
     public writeDuckSelectors = (name:string, method:MethodAbi) => {
         shell.cd(name);
 
-        let ducks_selectors_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_selectors_template.hbs")));
+        let ducks_selectors_template = String(fs.readFileSync(path.resolve(__dirname, "./templateDuck/selectors_template.hbs")));
         this.duck_selectors_code = Handlebars.compile(ducks_selectors_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_selectors_path = path.join(process.cwd(), `/selectors.ts`);
         fs.writeFileSync(duck_selectors_path, this.duck_selectors_code);
@@ -72,10 +76,11 @@ class DucksGenerator {
     public writeDuckTypes = (name:string, method:MethodAbi) => {
         shell.cd(name);
 
-        let ducks_types_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_types_template.hbs")));
+        let ducks_types_template = String(fs.readFileSync(path.resolve(__dirname, "./templateDuck/types_template.hbs")));
         this.duck_types_code = Handlebars.compile(ducks_types_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_types_path = path.join(process.cwd(), `/types.ts`);
         fs.writeFileSync(duck_types_path, this.duck_types_code);
@@ -87,7 +92,8 @@ class DucksGenerator {
         let ducks_tests_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/duck_tests_template.hbs")));
         this.duck_tests_code = Handlebars.compile(ducks_tests_template)({
             methodName : name, 
-            methodAbi: method
+            methodAbi: method,
+            titleName : pascalCase(name)
         })
         let duck_tests_path = path.join(process.cwd(), `/tests.ts`);
         fs.writeFileSync(duck_tests_path, this.duck_tests_code);
