@@ -1,0 +1,6 @@
+import { {{ titleName }}Method } from './types';
+import { dataSelectorFactory } from '../../reusable/selectors';
+
+const get{{ titleName }}Data = dataSelectorFactory({{ titleName }}Method);
+
+export { get{{ titleName }}Data }

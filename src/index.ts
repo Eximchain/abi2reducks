@@ -15,7 +15,7 @@ program
     .action((contract_name: string, contract_path:string) => {
         
         //fetch the contract ABI and filter out any functions listed
-        const abiMethods = require(contract_path).filter((fxn:AbiDefinition) => fxn.type === 'function');
+        const abiMethods = require(path.resolve(path.cwd(), contract_path)).filter((fxn:AbiDefinition) => fxn.type === 'function');
         const reducks = new ReducksGenerator({name: contract_name, abi: abiMethods});
         reducks.generate();
     })

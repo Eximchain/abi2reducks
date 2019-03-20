@@ -3,14 +3,6 @@
 
 // Type definitions for @eximchain/abi2reducks
 
-/*~ Note that ES6 modules cannot directly export class objects.
- *~ This file should be imported using the CommonJS-style:
- *~   import x = require('someLibrary');
- *~
- *~ Refer to the documentation to understand common
- *~ workarounds for this limitation of ES6 modules.
- */
-
 /*~ This declaration specifies that the class constructor function
  *~ is the exported object from the file
  */
@@ -28,7 +20,7 @@ declare class ReducksGenerator {
  *~ place them in this block.
  */
 declare namespace ReducksGenerator {
-    export type ReducksInput = {
+    export interface ReducksInput {
         name: string,
         abi: MethodAbi[]
     }

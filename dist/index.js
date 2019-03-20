@@ -22,7 +22,7 @@
         .usage('<contract_name> <contract_path>')
         .action(function (contract_name, contract_path) {
         //fetch the contract ABI and filter out any functions listed
-        var abiMethods = require(contract_path).filter(function (fxn) { return fxn.type === 'function'; });
+        var abiMethods = require(path.resolve(path.cwd(), contract_path)).filter(function (fxn) { return fxn.type === 'function'; });
         var reducks = new ReducksGenerator_1.default({ name: contract_name, abi: abiMethods });
         reducks.generate();
     });
