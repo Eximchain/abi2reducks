@@ -14,11 +14,6 @@ export type VoteInput = {
     _votes: string
 }
 
-export type VoteState = {
-    params : VoteInput,
-    error : string | null
-}
-
 export const VoteFxn:MethodAbi = {
     "constant": false,
     "inputs": [

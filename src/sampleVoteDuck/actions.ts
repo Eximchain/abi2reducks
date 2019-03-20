@@ -1,10 +1,10 @@
-import { VoteParams } from './types';
 import { actionNames } from '../reusable/actions';
-import { VoteFxn } from './types';
+import { ParamValue } from '../reusable/types';
+import { VoteFxn, VoteParams } from './types';
 
 const VoteActionTypes = actionNames(VoteFxn);
 
-export const setVoteParam = (fieldName:VoteParams, value:string|boolean|Number) => {
+export const setVoteParam = (fieldName:VoteParams, value:ParamValue) => {
     return {
         type : VoteActionTypes.SET,
         payload : { fieldName, value }

@@ -119,12 +119,11 @@
         Ints["size256"] = "int256";
     })(Ints = exports.Ints || (exports.Ints = {}));
     exports.NumberTypeStrings = Object.values(Uints).concat(Object.values(Ints));
-    exports.AllTypeStrings = ['bool', 'address', 'string'].concat(exports.ByteTypeStrings).concat(exports.NumberTypeStrings);
     var OtherSolTypes;
     (function (OtherSolTypes) {
         OtherSolTypes["address"] = "address";
         OtherSolTypes["bool"] = "bool";
         OtherSolTypes["string"] = "string";
-    })(OtherSolTypes = exports.OtherSolTypes || (exports.OtherSolTypes = {}));
+    })(OtherSolTypes || (OtherSolTypes = {}));
 });
 //# sourceMappingURL=types.js.map

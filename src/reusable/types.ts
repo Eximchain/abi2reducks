@@ -112,7 +112,7 @@ export type NumberTypes = Uints | Ints;
 
 export const NumberTypeStrings = Object.values(Uints).concat(Object.values(Ints));
 
-type ParamValue = boolean | string
+export type ParamValue = boolean | string
 
 type MethodParams = { [name:string] : ParamValue }
 

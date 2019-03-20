@@ -14,6 +14,8 @@ class DucksGenerator {
     private duck_types_code:any;
     private duck_tests_code:any;
 
+    // TODO: Refactor to account for new templateDuck
+
     public writeDuckFolder = (name:string) =>{
         shell.mkdir(name)
     }
