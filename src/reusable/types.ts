@@ -122,6 +122,8 @@ export type MethodState = {
     result? : any
 }
 
+export type AllMethodState = { [name:string] : MethodState }
+
 export type SetParamPayload = {
     fieldName: string
     value: ParamValue

@@ -4,61 +4,56 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./DucksGenerator", "./handlebars"], factory);
+        define(["require", "exports", "./handlebars"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var DucksGenerator_1 = require("./DucksGenerator");
     var handlebars_1 = require("./handlebars");
     var shell = require('shelljs');
     var path = require("path");
-    var fs = require("fs");
+    var fs = require("fs-extra");
+    var writeTemplateToPath = require('./util').writeTemplateToPath;
     var ReducksGenerator = /** @class */ (function () {
         function ReducksGenerator(_a) {
             var name = _a.name, abi = _a.abi;
             var _this = this;
             this.initReducks = function () {
                 // cd into directory and create folder for each ABI method
-                shell.mkdir('ducks');
+                writeTemplateToPath('./templates/state_index.hbs', './index.ts');
+                writeTemplateToPath('./templates/store.hbs', './store.ts');
+                writeTemplateToPath('./templates/contract.hbs', './Contract.ts', {
+                    abi: _this.ABI,
+                    // TODO: Hook up an environment variable generator so this isn't hardcoded
+                    web3URL: 'https://gamma-tx-executor-us-east.eximchain-dev.com'
+                });
+                fs.copySync(_this.REUSABLE_DIR, path.resolve(process.cwd(), './reusable'));
+                fs.ensureDirSync(_this.REDUCKS_DIR);
                 shell.cd(_this.REDUCKS_DIR);
-                shell.touch('reusable.ts');
-                _this.writeReducksIndex();
-                _this.writeReducksTypes();
-                _this.ABI.forEach(function (fxn) {
-                    _this.ducksGenerator.writeDuckFolder(camelCase(fxn.name));
-                    _this.ducksGenerator.writeDuckIndex(camelCase(fxn.name), fxn);
-                    _this.ducksGenerator.writeDuckActions(camelCase(fxn.name), fxn);
-                    _this.ducksGenerator.writeDuckReducers(camelCase(fxn.name), fxn);
-                    _this.ducksGenerator.writeDuckSelectors(camelCase(fxn.name), fxn);
-                    _this.ducksGenerator.writeDuckTypes(camelCase(fxn.name), fxn);
-                    _this.ducksGenerator.writeDuckTests(camelCase(fxn.name), fxn);
-                });
+                writeTemplateToPath('./templates/ducks_index.hbs', './index.ts', { abi: _this.ABI });
+                _this.ABI.forEach(function (fxn) { return _this.writeTxDuck(fxn); });
             };
-            this.writeReducksIndex = function () {
-                var export_index_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/reducks_export_index_template.hbs")));
-                _this.export_index_code = handlebars_1.default.compile(export_index_template)({
-                    abi: _this.ABI
-                });
-                var export_index_path = path.join(process.cwd(), "/index.ts");
-                fs.writeFileSync(export_index_path, _this.export_index_code);
+            this.writeTxDuck = function (method) {
+                var dirName = handlebars_1.camelCase(method.name);
+                fs.ensureDirSync(dirName);
+                shell.cd(dirName);
+                var templateArg = {
+                    methodName: method.name,
+                    methodAbi: method,
+                    titleName: handlebars_1.pascalCase(method.name)
+                };
+                writeTemplateToPath('./templates/duck/index.hbs', './index.ts', templateArg);
+                writeTemplateToPath('./templates/duck/actions.hbs', './actions.ts', templateArg);
+                writeTemplateToPath('./templates/duck/reducers.hbs', './reducers.ts', templateArg);
+                writeTemplateToPath('./templates/duck/selectors.hbs', './selectors.ts', templateArg);
+                writeTemplateToPath('./templates/duck/types.hbs', './types.ts', templateArg);
+                shell.cd('..');
             };
-            this.writeReducksTypes = function () {
-                var types_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/reducks_types_template.hbs")));
-                _this.types_code = handlebars_1.default.compile(types_template)({
-                    abi: _this.ABI
-                });
-                var export_index_path = path.join(process.cwd(), "/types.ts");
-                fs.writeFileSync(export_index_path, _this.types_code);
-            };
-            //NOTE: make a duck factory 
-            this.ducksGenerator = new DucksGenerator_1.default();
-            //NOTE: set default directories, etc.
             this.START_DIR = process.cwd();
-            this.REDUCKS_DIR = this.START_DIR + "/ducks";
-            //NOTE: store contract details
+            this.REDUCKS_DIR = this.START_DIR + "/txDucks";
             this.ABI = abi.filter(function (fxn) { return fxn.type === 'function'; });
             this.CONTRACT_NAME = name;
+            this.REUSABLE_DIR = path.resolve(__dirname, '../src/reusable');
         }
         ReducksGenerator.prototype.generate = function () {
             shell.cd("" + this.START_DIR);
@@ -67,11 +62,6 @@
         return ReducksGenerator;
     }());
     exports.ReducksGenerator = ReducksGenerator;
-    function camelCase(input) {
-        return input.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
-            return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-        }).replace(/\s+/g, '');
-    }
     exports.default = ReducksGenerator;
 });
 //# sourceMappingURL=ReducksGenerator.js.map

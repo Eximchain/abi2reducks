@@ -3,6 +3,10 @@ let Handlebars = require("handlebars");
 
 export const pascalCase = (input:string) => input.replace(/(\w)(\w*)/g, function(g0,g1,g2){return g1.toUpperCase() + g2.toLowerCase();});
 
+export const camelCase = (input:string) => input.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+    return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+  }).replace(/\s+/g, '')
+
 Handlebars.registerHelper({
    
     logconsole(){
@@ -13,9 +17,7 @@ Handlebars.registerHelper({
         return input.toUpperCase()
     },
     camelCase(input:string) {
-        return input.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
-          return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-        }).replace(/\s+/g, '');
+        return camelCase(input);
     },
     pascalCase(input: string){
         return pascalCase(input)
@@ -29,6 +31,9 @@ Handlebars.registerHelper({
     },
     solToJSType(input:string){
         return input === 'bool' ? 'boolean' : 'string';
+    },
+    stringify(input:Object){
+        return JSON.stringify(input, null, 2)
     }
 });
 

@@ -14,12 +14,12 @@
      * with SET & SUBMIT action names which are scoped
      * to the method.
      *
-     * @param fxn:MethodAbi
+     * @param method:MethodAbi
      */
-    exports.actionNames = function (fxn) {
+    exports.actionNames = function (method) {
         return {
-            SET: "fxn/" + fxn.name + "/set",
-            SUBMIT: "fxn/" + fxn.name + "/submit"
+            SET: "method/" + method.name + "/set",
+            SUBMIT: "method/" + method.name + "/submit"
         };
     };
 });

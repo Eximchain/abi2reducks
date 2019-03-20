@@ -1,6 +1,6 @@
 {
   "name": "@eximchain/abi2reducks",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Convert an ABI into reducks modules for each method.",
   "main": "dist/index.js",
   "types": "src/index.d.ts",
@@ -12,6 +12,7 @@
     "bignumber.js": "^8.1.1",
     "commander": "^2.19.0",
     "ethereum-types": "^2.1.0",
+    "fs-extra": "^7.0.1",
     "lodash.camelcase": "^4.3.0",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
@@ -28,7 +29,7 @@
     "build": "tsc && npm run handlebars",
     "start": "dist/index.js",
     "restart": "npm run build; npm run start",
-    "handlebars": "rsync -auv src/templates/*.hbs dist/templates/"
+    "handlebars": "rsync -auv src/templates/* dist/templates/"
   },
   "repository": {
     "type": "git",

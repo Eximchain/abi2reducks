@@ -1,9 +1,0 @@
-{{#each abi}}
-
-import {{name}}Reducer from "./reducers";
-
-export { default as {{name}}Selectors } from "./selectors";
-export { default as {{name}}Operations } from "./operations";
-export { default as {{name}}Types } from "./types";
-
-export default {{name}}Reducer;

@@ -1,6 +1,6 @@
 import { MethodAbi } from 'ethereum-types';
 import { MethodState } from './types';
-import Contract from '../GeneratedContract';
+import Contract from '../Contract';
 
 /**
  * Factory to produce a selector function which retrieves the `data` field

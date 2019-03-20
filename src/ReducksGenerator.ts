@@ -1,10 +1,11 @@
 
 import {MethodAbi} from 'ethereum-types';
-import DucksGenerator from './DucksGenerator'
-import Handlebars from './handlebars'
+import { pascalCase, camelCase } from './handlebars'
 const shell = require('shelljs');
 let path = require("path");
-let fs = require("fs");
+let fs = require("fs-extra");
+
+const { writeTemplateToPath } = require('./util');
 
 export type ReducksInput = {
     name: string,
@@ -14,24 +15,18 @@ export type ReducksInput = {
 export class ReducksGenerator {
 
     constructor({name, abi}:ReducksInput){
-        //NOTE: make a duck factory 
-        this.ducksGenerator = new DucksGenerator()
-        //NOTE: set default directories, etc.
         this.START_DIR = process.cwd();
-        this.REDUCKS_DIR = `${this.START_DIR}/ducks`
-        //NOTE: store contract details
+        this.REDUCKS_DIR = `${this.START_DIR}/txDucks`
         this.ABI = abi.filter(fxn => fxn.type === 'function');
         this.CONTRACT_NAME = name;
-        
+        this.REUSABLE_DIR = path.resolve(__dirname, '../src/reusable');
     }
 
     private CONTRACT_NAME:string;
     private START_DIR:string;
     private REDUCKS_DIR:string;
     private ABI:MethodAbi[];
-    private types_code:any;
-    private export_index_code:any;
-    private ducksGenerator:any;
+    private REUSABLE_DIR : string;
 
     public generate(){
         shell.cd(`${this.START_DIR}`);
@@ -40,54 +35,37 @@ export class ReducksGenerator {
 
     private initReducks = () => {
         // cd into directory and create folder for each ABI method
-        shell.mkdir('ducks');
+        writeTemplateToPath('./templates/state_index.hbs', './index.ts');
+        writeTemplateToPath('./templates/store.hbs', './store.ts');
+        writeTemplateToPath('./templates/contract.hbs', './Contract.ts', {
+            abi : this.ABI,
+            // TODO: Hook up an environment variable generator so this isn't hardcoded
+            web3URL : 'https://gamma-tx-executor-us-east.eximchain-dev.com'
+        })
+        fs.copySync(this.REUSABLE_DIR, path.resolve(process.cwd(), './reusable'))
+        fs.ensureDirSync(this.REDUCKS_DIR);
         shell.cd(this.REDUCKS_DIR);
-        shell.touch('reusable.ts');
-        this.writeReducksIndex();
-        this.writeReducksTypes();
-        
-        this.ABI.forEach(fxn => {
-            this.ducksGenerator.writeDuckFolder(camelCase(fxn.name))
-            this.ducksGenerator.writeDuckIndex(camelCase(fxn.name),fxn)
-            this.ducksGenerator.writeDuckActions(camelCase(fxn.name),fxn)
-            this.ducksGenerator.writeDuckReducers(camelCase(fxn.name),fxn)
-            this.ducksGenerator.writeDuckSelectors(camelCase(fxn.name),fxn)
-            this.ducksGenerator.writeDuckTypes(camelCase(fxn.name),fxn)
-            this.ducksGenerator.writeDuckTests(camelCase(fxn.name),fxn)
-        });
+        writeTemplateToPath('./templates/ducks_index.hbs', './index.ts', { abi : this.ABI })
+        this.ABI.forEach(fxn => this.writeTxDuck(fxn));
     }
 
-    // TODO: Write out the contract file
-    private writeContract = () => {
-        
-    }
-
-    private writeReducksIndex = () =>{
-        let export_index_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/reducks_export_index_template.hbs")));
-        this.export_index_code = Handlebars.compile(export_index_template)({
-            abi: this.ABI
-        })
-        let export_index_path = path.join(process.cwd(), `/index.ts`);
-        fs.writeFileSync(export_index_path, this.export_index_code);
-
-    }
-    private writeReducksTypes = () =>{
-        let types_template = String(fs.readFileSync(path.resolve(__dirname, "./templates/reducks_types_template.hbs")));
-        this.types_code = Handlebars.compile(types_template)({
-            abi: this.ABI
-        })
-        let export_index_path = path.join(process.cwd(), `/types.ts`);
-        fs.writeFileSync(export_index_path, this.types_code);
-
+    private writeTxDuck = (method:MethodAbi) => {
+        const dirName = camelCase(method.name);
+        fs.ensureDirSync(dirName)
+        shell.cd(dirName);
+        const templateArg = {
+            methodName : method.name,
+            methodAbi : method,
+            titleName : pascalCase(method.name)
+        };
+        writeTemplateToPath('./templates/duck/index.hbs', './index.ts', templateArg);
+        writeTemplateToPath('./templates/duck/actions.hbs', './actions.ts', templateArg);
+        writeTemplateToPath('./templates/duck/reducers.hbs', './reducers.ts', templateArg)
+        writeTemplateToPath('./templates/duck/selectors.hbs', './selectors.ts', templateArg);
+        writeTemplateToPath('./templates/duck/types.hbs', './types.ts', templateArg);
+        shell.cd('..');
     }
 
 }
-
-function camelCase(input:string) {
-    return input.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
-      return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-    }).replace(/\s+/g, '');
-}
-
 
 export default ReducksGenerator;

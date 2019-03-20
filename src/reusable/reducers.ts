@@ -6,7 +6,7 @@ import {
 } from './types';
 import {
     buildInputTypeMap, cleanTypedValue, validateTypedValue
-} from '../util';
+} from './util';
 
 /**
  * Given an ABI method, returns a default fxnReducer state
