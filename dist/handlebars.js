@@ -10,10 +10,31 @@
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Handlebars = require("handlebars");
-    exports.pascalCase = function (input) { return input.replace(/(\w)(\w*)/g, function (g0, g1, g2) { return g1.toUpperCase() + g2.toLowerCase(); }); };
-    exports.camelCase = function (input) { return input.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
-        return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-    }).replace(/\s+/g, ''); };
+    var hasMixedChars = function (input) { return /[a-z]/.test(input) && /[A-Z]/.test(input); };
+    var lowCaseAllUpcase = function (input) { return hasMixedChars(input) ? input : input.toLowerCase(); };
+    var capitalize = function (input) { return input.charAt(0).toUpperCase() + input.slice(1); };
+    var snakeToPascal = function (input) { return input.split('_').map(lowCaseAllUpcase).map(capitalize).join(''); };
+    var firstCharLow = function (input) { return input.charAt(0).toLowerCase() + input.slice(1); };
+    /**
+     * Given a string in either camel or snake case, return it in pascalCase (i.e. titleCase)
+     * @param input
+     */
+    exports.pascalCase = function (input) {
+        if (input.indexOf('_') != -1) {
+            return input.split('_').map(capitalize).join('');
+        }
+        else {
+            return capitalize(input);
+        }
+    };
+    exports.camelCase = function (input) {
+        if (input.indexOf('_') != -1) {
+            return firstCharLow(snakeToPascal(input));
+        }
+        else {
+            return firstCharLow(input);
+        }
+    };
     Handlebars.registerHelper({
         logconsole: function () {
             var args = Array.prototype.slice.call(arguments);
