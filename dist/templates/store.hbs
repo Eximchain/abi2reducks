@@ -4,7 +4,7 @@ import thunkMiddleware from "redux-thunk";
 import * as reducers from "./txDucks";
 import { AllMethodState } from './reusable/types';
 
-export default function configureStore( initialState:AllMethodState ) {
+export default function configureStore( initialState?:AllMethodState ) {
     const rootReducer = combineReducers( reducers );
 
     return createStore(

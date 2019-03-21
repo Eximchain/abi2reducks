@@ -1,6 +1,6 @@
-import { {{ titleName }}Method } from './types';
-import { dataSelectorFactory } from '../../reusable/selectors';
+import { Method } from './types';
+import { selectorsFactory } from '../../reusable/selectors';
 
-const get{{ titleName }}Data = dataSelectorFactory({{ titleName }}Method);
+const { selectMethod, selectData } = selectorsFactory(Method);
 
-export { get{{ titleName }}Data }
+export { selectMethod, selectData }

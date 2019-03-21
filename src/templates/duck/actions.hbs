@@ -1,18 +1,18 @@
 import { actionNames } from '../../reusable/actions';
 import { ParamValue } from '../../reusable/types';
-import { {{ titleName }}Method, {{ titleName }}Params } from './types';
+import { Method, ParamNames } from './types';
 
-const {{ titleName }}ActionTypes = actionNames({{ titleName }}Method);
+const ActionNames = actionNames(Method);
 
-export const set{{ titleName }}Param = (fieldName:{{ titleName }}Params, value:ParamValue) => {
+export const setParam = (fieldName:ParamNames, value:ParamValue) => {
     return {
-        type : {{ titleName }}ActionTypes.SET,
+        type : ActionNames.SET,
         payload : { fieldName, value }
     }
 }
 
-export const submit{{ titleName }} = () => {
+export const submit = () => {
     return {
-        type : {{ titleName }}ActionTypes.SUBMIT
+        type : ActionNames.SUBMIT
     }
 }

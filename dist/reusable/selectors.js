@@ -4,33 +4,35 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../Contract"], factory);
+        define(["require", "exports", "./util", "../Contract"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var util_1 = require("./util");
     var Contract_1 = require("../Contract");
     /**
-     * Factory to produce a selector function which retrieves the `data` field
-     * for a given ABI method.  Given the MethodAbi object, returns a function
-     * which accepts a FxnState object and returns the function's data field
-     * with the given parameters.
-     *
+     * Factory which accepts a MethodAbi and produces 2 selector functions:
+     * selectMethod - retrieves a given method's MethodState (i.e. params, error)
+     * selectData - computes the encoded `data` field given the current params
      * @param method:MethodAbi
      */
-    exports.dataSelectorFactory = function (method) {
-        var paramTypes = method.inputs.map(function (_a) {
-            var type = _a.type;
-            return type;
-        });
-        var methodName = method.name + "(" + paramTypes.join(',') + ")";
-        return function (state) {
+    exports.selectorsFactory = function (method) {
+        var selectMethod = function (state) { return state[util_1.pascalCase(method.name)]; };
+        var selectData = function (state) {
             var _a;
+            var methodState = selectMethod(state);
+            var paramTypes = method.inputs.map(function (_a) {
+                var type = _a.type;
+                return type;
+            });
+            var methodName = method.name + "(" + paramTypes.join(',') + ")";
             return (_a = Contract_1.default.methods)[methodName].apply(_a, method.inputs.map(function (_a) {
                 var name = _a.name;
-                state.params[name];
+                methodState.params[name];
             })).encodeABI();
         };
+        return { selectMethod: selectMethod, selectData: selectData };
     };
 });
 //# sourceMappingURL=selectors.js.map

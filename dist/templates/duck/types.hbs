@@ -1,6 +1,6 @@
 import { MethodAbi } from 'ethereum-types';
 
-export enum {{ titleName }}Params {
+export enum ParamNames {
 {{#each inputs}}
 {{#if name}}
     {{name}} = '{{name}}',
@@ -10,7 +10,7 @@ export enum {{ titleName }}Params {
 {{/each}}
 }
 
-export type {{ titleName }}Input = {
+export type Input = {
 {{#each inputs}}
 {{#if name}}
     {{name}} : {{solToJsType type}}
@@ -20,4 +20,4 @@ export type {{ titleName }}Input = {
 {{/each}}
 }
 
-export const {{ titleName }}Method:MethodAbi = {{{ stringify methodAbi }}}
+export const Method:MethodAbi = {{{ stringify methodAbi }}}

@@ -126,5 +126,18 @@
             }
         }
     };
+    var capitalize = function (input) { return input.charAt(0).toUpperCase() + input.slice(1); };
+    /**
+     * Given a string in either camel or snake case, return it in pascalCase (i.e. titleCase)
+     * @param input
+     */
+    exports.pascalCase = function (input) {
+        if (input.indexOf('_') != -1) {
+            return input.split('_').map(capitalize).join('');
+        }
+        else {
+            return capitalize(input);
+        }
+    };
 });
 //# sourceMappingURL=util.js.map

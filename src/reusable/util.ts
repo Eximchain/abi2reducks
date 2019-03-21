@@ -107,3 +107,17 @@ const validateNumber:(name:string,type:string,value:any)=>string | null = (name,
         }
     }
 }
+
+const capitalize = (input:string) => input.charAt(0).toUpperCase() + input.slice(1);
+
+/**
+ * Given a string in either camel or snake case, return it in pascalCase (i.e. titleCase)
+ * @param input 
+ */
+export const pascalCase = (input:string) => {
+    if (input.indexOf('_') != -1){
+        return input.split('_').map(capitalize).join('')
+    } else {
+        return capitalize(input);
+    }
+}

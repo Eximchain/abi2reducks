@@ -1,21 +1,23 @@
 import { MethodAbi } from 'ethereum-types';
-import { MethodState } from './types';
+import { MethodState, AllMethodState } from './types';
+import { pascalCase } from './util';
 import Contract from '../Contract';
 
 /**
- * Factory to produce a selector function which retrieves the `data` field
- * for a given ABI method.  Given the MethodAbi object, returns a function
- * which accepts a FxnState object and returns the function's data field
- * with the given parameters.
- * 
- * @param method:MethodAbi 
+ * Factory which accepts a MethodAbi and produces 2 selector functions:
+ * selectMethod - retrieves a given method's MethodState (i.e. params, error)
+ * selectData - computes the encoded `data` field given the current params
+ * @param method:MethodAbi
  */
-export const dataSelectorFactory = (method:MethodAbi) => {
-    let paramTypes = method.inputs.map(({type})=>type)
-    let methodName = `${method.name}(${paramTypes.join(',')})`;
-    return (state:MethodState) => {
+export const selectorsFactory = (method:MethodAbi) => {
+    const selectMethod = (state:AllMethodState) => state[pascalCase(method.name)]
+    const selectData = (state:AllMethodState) => {
+        const methodState:MethodState = selectMethod(state);
+        let paramTypes = method.inputs.map(({type})=>type)
+        let methodName = `${method.name}(${paramTypes.join(',')})`;
         return Contract.methods[methodName](...method.inputs.map(
-            ({name})=>{ state.params[name] }
-        )).encodeABI();
+            ({name})=>{ methodState.params[name] }
+        )).encodeABI()
     }
+    return { selectMethod, selectData }
 }
