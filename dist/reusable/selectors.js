@@ -18,7 +18,7 @@
      * @param method:MethodAbi
      */
     exports.selectorsFactory = function (method) {
-        var selectMethod = function (state) { return state[util_1.pascalCase(method.name)]; };
+        var selectMethod = function (state) { return state[util_1.pascalCase(method.name) + "Reducer"]; };
         var selectData = function (state) {
             var _a;
             var methodState = selectMethod(state);
@@ -27,10 +27,15 @@
                 return type;
             });
             var methodName = method.name + "(" + paramTypes.join(',') + ")";
-            return (_a = Contract_1.default.methods)[methodName].apply(_a, method.inputs.map(function (_a) {
-                var name = _a.name;
-                methodState.params[name];
-            })).encodeABI();
+            try {
+                return (_a = Contract_1.default.methods)[methodName].apply(_a, method.inputs.map(function (_a) {
+                    var name = _a.name;
+                    return methodState.params[name];
+                })).encodeABI();
+            }
+            catch (_b) {
+                return 'Arguments do not yet produce valid data.';
+            }
         };
         return { selectMethod: selectMethod, selectData: selectData };
     };
