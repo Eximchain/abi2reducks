@@ -10,14 +10,18 @@ import Contract from '../Contract';
  * @param method:MethodAbi
  */
 export const selectorsFactory = (method:MethodAbi) => {
-    const selectMethod = (state:AllMethodState) => state[pascalCase(method.name)]
+    const selectMethod = (state:AllMethodState) => state[`${pascalCase(method.name)}Reducer`]
     const selectData = (state:AllMethodState) => {
         const methodState:MethodState = selectMethod(state);
         let paramTypes = method.inputs.map(({type})=>type)
         let methodName = `${method.name}(${paramTypes.join(',')})`;
-        return Contract.methods[methodName](...method.inputs.map(
-            ({name})=>{ methodState.params[name] }
-        )).encodeABI()
+        try {
+            return Contract.methods[methodName](...method.inputs.map(
+                ({name})=>methodState.params[name]
+            )).encodeABI()
+        } catch {
+            return 'Arguments do not yet produce valid data.'
+        }
     }
     return { selectMethod, selectData }
 }

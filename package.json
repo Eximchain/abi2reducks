@@ -1,6 +1,6 @@
 {
   "name": "@eximchain/abi2reducks",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Convert an ABI into reducks modules for each method.",
   "main": "dist/index.js",
   "types": "src/index.d.ts",
@@ -46,7 +46,7 @@
     "ducks",
     "reducks"
   ],
-  "author": "Juan Huertas <juan@eximchain.com>",
+  "author": "Juan Huertas, John O'Sullivan",
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/Eximchain/abi2reducks/issues"
