@@ -33,7 +33,6 @@
     });
     if (require.main === module) {
         var args = process.argv.slice(2);
-        console.log('args: ', args);
         if (args.length != 2) {
             program.help();
         }

@@ -17,7 +17,10 @@ export const selectorsFactory = (method:MethodAbi) => {
         let methodName = `${method.name}(${paramTypes.join(',')})`;
         try {
             return Contract.methods[methodName](...method.inputs.map(
-                ({name})=>methodState.params[name]
+                ({name}, index)=>{
+                    let paramName = name === "" ? `arg-${index}` : name;
+                    return methodState.params[paramName]
+                }
             )).encodeABI()
         } catch {
             return 'Arguments do not yet produce valid data.'

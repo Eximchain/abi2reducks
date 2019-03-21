@@ -20,7 +20,7 @@ export const buildInputTypeMap:(fxn:MethodAbi)=>InputMap = (fxn:MethodAbi) => {
     }, {})
 }
 
-export const cleanTypedValue:(name:string,type:string,value:any)=>[any,string|null] = (type:string, value:any) => {
+export const cleanTypedValue:(name:string,type:string,value:any)=>[any,string|null] = (name, type, value) => {
     if (Object.values(NumberTypeStrings).includes(type)){
         return [value.replace(/\D/g, ''), null];
     } else if (Object.values(ByteTypeStrings).includes(type)){

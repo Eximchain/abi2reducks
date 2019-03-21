@@ -26,7 +26,7 @@
             return typeMap;
         }, {});
     };
-    exports.cleanTypedValue = function (type, value) {
+    exports.cleanTypedValue = function (name, type, value) {
         if (Object.values(types_1.NumberTypeStrings).includes(type)) {
             return [value.replace(/\D/g, ''), null];
         }

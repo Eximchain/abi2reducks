@@ -28,9 +28,10 @@
             });
             var methodName = method.name + "(" + paramTypes.join(',') + ")";
             try {
-                return (_a = Contract_1.default.methods)[methodName].apply(_a, method.inputs.map(function (_a) {
+                return (_a = Contract_1.default.methods)[methodName].apply(_a, method.inputs.map(function (_a, index) {
                     var name = _a.name;
-                    return methodState.params[name];
+                    var paramName = name === "" ? "arg-" + index : name;
+                    return methodState.params[paramName];
                 })).encodeABI();
             }
             catch (_b) {
