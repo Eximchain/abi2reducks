@@ -21,7 +21,8 @@ declare class ReducksGenerator {
  */
 declare namespace ReducksGenerator {
     export interface ReducksInput {
-        name: string,
-        abi: MethodAbi[]
+        abi: MethodAbi[],
+        address: string,
+        web3URL: string
     }
 }

@@ -26,14 +26,14 @@ It expects to be called within an empty directory (e.g. `state`) and will set it
 ```
 
 ## CLI Usage
-As a command line utility, install globally and then call the command with the contract name and path to an ABI JSON:
+As a command line utility, install globally and then call the command with the path to an ABI JSON, its deployed address, and a web3 HTTP Provider URL.
 
 ```
 $ npm i -g @eximchain/abi2reducks
 $ ...
 $ abi2reducks --help
 $
-$ abi2reducks contract path/to/abi.json
+$ abi2reducks path/to/abi.json 0x00...002a https://gamma-tx-executor-us-east.eximchain-dev.com
 ```
 
 ## Library Usage
@@ -49,8 +49,9 @@ import ReducksGenerator from '@eximchain/abi2reducks'
 
 // Create generator
 const duckGen = new ReducksGenerator({
-    name : [yourContractName],
-    abi : [array of MethodAbi objects]
+    abi : [array of MethodAbi objects],
+    address: [string Ethereum address],
+    web3URL: [string HTTPProvider URL]
 })
 
 // Create /ducks/... in your cwd()

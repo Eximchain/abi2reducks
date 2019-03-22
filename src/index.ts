@@ -11,18 +11,16 @@ program
     .version(npmPackage.version)
     .name(npmPackage.name)
     .description(npmPackage.description)
-    .usage('<contract_name> <contract_path>')
-    .action((contract_name: string, contract_path:string) => {
-        
-        //fetch the contract ABI and filter out any functions listed
+    .usage('<contract_path> <contract_address> <web3URL>')
+    .action((contract_path:string, contract_address:string, web3URL: string) => {
         const abiMethods = require(path.resolve(process.cwd(), contract_path)).filter((fxn:AbiDefinition) => fxn.type === 'function');
-        const reducks = new ReducksGenerator({name: contract_name, abi: abiMethods});
+        const reducks = new ReducksGenerator({abi: abiMethods, address: contract_address, web3URL: web3URL });
         reducks.generate();
     })
 
 program.on('--help', () => {
     console.log('');
-    console.log('  Call with a path to your smart contract ABI.  Will generate the DApp in a folder named `ducks');
+    console.log('  Call with a path to your smart contract ABI, its deployed address, and an HTTPProvider URL.  Will generate the DApp in a folder named `ducks');
     console.log('');
 })
 

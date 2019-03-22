@@ -8,21 +8,24 @@ let fs = require("fs-extra");
 const { writeTemplateToPath } = require('./util');
 
 export type ReducksInput = {
-    name: string,
-    abi: MethodAbi[]
+    abi: MethodAbi[],
+    address: string,
+    web3URL: string
 }
 
 export class ReducksGenerator {
 
-    constructor({name, abi}:ReducksInput){
+    constructor({abi, address, web3URL}:ReducksInput){
         this.START_DIR = process.cwd();
         this.REDUCKS_DIR = `${this.START_DIR}/txDucks`
         this.ABI = abi.filter(fxn => fxn.type === 'function');
-        this.CONTRACT_NAME = name;
         this.REUSABLE_DIR = path.resolve(__dirname, '../src/reusable');
+        this.CONTRACT_ADDR = address;
+        this.WEB3_URL = web3URL;
     }
 
-    private CONTRACT_NAME:string;
+    private WEB3_URL:string;
+    private CONTRACT_ADDR:string;
     private START_DIR:string;
     private REDUCKS_DIR:string;
     private ABI:MethodAbi[];
@@ -40,7 +43,8 @@ export class ReducksGenerator {
         writeTemplateToPath('./templates/contract.hbs', './Contract.ts', {
             abi : this.ABI,
             // TODO: Hook up an environment variable generator so this isn't hardcoded
-            web3URL : 'https://gamma-tx-executor-us-east.eximchain-dev.com'
+            web3URL : this.WEB3_URL,
+            contractAddress : this.CONTRACT_ADDR
         })
         fs.copySync(this.REUSABLE_DIR, path.resolve(process.cwd(), './reusable'))
         fs.ensureDirSync(this.REDUCKS_DIR);
