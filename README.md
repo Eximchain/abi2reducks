@@ -32,7 +32,8 @@ As a command line utility, install globally and then call the command with the c
 $ npm i -g @eximchain/abi2reducks
 $ ...
 $ abi2reducks --help
-$ abi2reducks
+$
+$ abi2reducks contract path/to/abi.json
 ```
 
 ## Library Usage

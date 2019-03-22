@@ -14,8 +14,8 @@ import {
  * @param fxn 
  */
 export const buildInputTypeMap:(fxn:MethodAbi)=>InputMap = (fxn:MethodAbi) => {
-    return fxn.inputs.reduce((typeMap, {name, type}) => {
-        typeMap[name] = type;
+    return fxn.inputs.reduce((typeMap, {name, type}, index) => {
+        typeMap[name || `arg-${index}`] = type;
         return typeMap;
     }, {})
 }
