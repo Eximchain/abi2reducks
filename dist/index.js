@@ -19,16 +19,14 @@
         .version(npmPackage.version)
         .name(npmPackage.name)
         .description(npmPackage.description)
-        .usage('<contract_name> <contract_path>')
-        .action(function (contract_name, contract_path) {
-        //fetch the contract ABI and filter out any functions listed
+        .usage('<contract_path> <contract_address> <web3URL>')
+        .action(function (contract_path, contract_address, web3URL) {
         var abiMethods = require(path.resolve(process.cwd(), contract_path)).filter(function (fxn) { return fxn.type === 'function'; });
-        var reducks = new ReducksGenerator_1.default({ name: contract_name, abi: abiMethods });
-        reducks.generate();
+        ReducksGenerator_1.default.generate({ abi: abiMethods, address: contract_address, web3URL: web3URL });
     });
     program.on('--help', function () {
         console.log('');
-        console.log('  Call with a path to your smart contract ABI.  Will generate the DApp in a folder named `ducks');
+        console.log('  Call with a path to your smart contract ABI, its deployed address, and an HTTPProvider URL.  Will generate the DApp in a folder named `ducks');
         console.log('');
     });
     if (require.main === module) {
@@ -40,8 +38,6 @@
             program.parse(process.argv);
         }
     }
-    else {
-        module.exports.default = ReducksGenerator_1.default;
-    }
+    exports.default = { generate: ReducksGenerator_1.generate };
 });
 //# sourceMappingURL=index.js.map

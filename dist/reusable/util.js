@@ -20,9 +20,9 @@
      * @param fxn
      */
     exports.buildInputTypeMap = function (fxn) {
-        return fxn.inputs.reduce(function (typeMap, _a) {
+        return fxn.inputs.reduce(function (typeMap, _a, index) {
             var name = _a.name, type = _a.type;
-            typeMap[name] = type;
+            typeMap[name || "arg-" + index] = type;
             return typeMap;
         }, {});
     };
