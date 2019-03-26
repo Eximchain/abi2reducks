@@ -1,6 +1,3 @@
-// TEMPLATE CLASS MODULE DECLARATION FILE
-// Source: https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-class-d-ts.html
-
 // Type definitions for @eximchain/abi2reducks
 
 import { MethodAbi } from 'ethereum-types';
