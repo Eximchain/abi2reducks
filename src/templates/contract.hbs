@@ -1,5 +1,5 @@
 const Web3 = require('web3');
-const web3 = new Web3('{{ web3URL }}');
+export const web3 = new Web3('{{ web3URL }}');
 export const CONTRACT_ADDR = '{{ contractAddress }}'
 export const ContractABI = {{{ stringify abi }}}
 export default new web3.eth.Contract(ContractABI, CONTRACT_ADDR);
