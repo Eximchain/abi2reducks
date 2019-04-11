@@ -53,6 +53,9 @@ Handlebars.registerHelper({
     },
     stringify(input:Object){
         return JSON.stringify(input, null, 2)
+    },
+    allowEnvLiteral(input:string){
+        return input.indexOf('process.env') === 0 ? input : `"input"`
     }
 });
 
