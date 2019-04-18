@@ -1,5 +1,27 @@
 const Web3 = require('web3');
-export const web3 = new Web3({{ allowEnvLiteral web3URL }});
+
+let { web3 } = window as any;
+
+const getWeb3Provider = ()=>{
+  //if metamask is installed windows will be having web3 injected
+  if (typeof web3 !== "undefined") {
+    console.log("Injected web3");
+    const provider = web3.currentProvider;
+    return provider;
+  }
+  //else use provider
+  else {
+    console.log("Local web3");
+    const provider = new Web3( new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }}));
+  return provider;
+  }
+}
+
+web3 = new Web3(getWeb3Provider());
+
+export { web3 };
+
+export const CHAIN_ID=1;
 export const CONTRACT_ADDR = {{ allowEnvLiteral contractAddress }};
 export const ContractABI = {{{ stringify abi }}}
 export default new web3.eth.Contract(ContractABI, CONTRACT_ADDR);
