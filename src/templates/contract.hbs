@@ -2,18 +2,14 @@ const Web3 = require('web3');
 
 let { web3 } = window as any;
 
-const getWeb3Provider = ()=>{
+const getWeb3Provider = () => {
   //if metamask is installed windows will be having web3 injected
   if (typeof web3 !== "undefined") {
-    console.log("Injected web3");
-    const provider = web3.currentProvider;
-    return provider;
+    return web3.currentProvider;
   }
   //else use provider
   else {
-    console.log("Local web3");
-    const provider = new Web3( new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }}));
-  return provider;
+    return new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }});
   }
 }
 
