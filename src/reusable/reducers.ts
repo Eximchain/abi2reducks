@@ -1,5 +1,4 @@
 import { MethodAbi } from 'ethereum-types';
-const merge = require('lodash.merge');
 import { actionNames } from './actions';
 import { 
     NumberTypeStrings, ByteTypeStrings, Action, MethodState, SetParamPayload
@@ -7,6 +6,7 @@ import {
 import {
     buildInputTypeMap, cleanTypedValue, validateTypedValue
 } from './util';
+const merge = require('lodash.merge');
 
 /**
  * Given an ABI method, returns a default fxnReducer state

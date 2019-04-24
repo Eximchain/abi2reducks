@@ -1,6 +1,6 @@
 {
   "name": "@eximchain/abi2reducks",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Convert an ABI into reducks modules for each method.",
   "main": "dist/index.js",
   "types": "src/index.d.ts",

@@ -1,10 +1,9 @@
 import { MethodAbi } from "ethereum-types";
 import * as web3Utils from 'web3-utils';
-const BigNum = require('bignumber.js');
-
 import { 
     NumberTypeStrings, ByteTypeStrings, Uints, Ints, InputMap
 } from './types';
+const BigNum = require('bignumber.js');
 
 /**
  * Given a method ABI, return an object whose keys
