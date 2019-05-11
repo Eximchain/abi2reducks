@@ -1,19 +1,51 @@
 const Web3 = require('web3');
 
 let { web3 } = window as any;
+let {ethereum} = window as any;
 
-const getWeb3Provider = () => {
+export const getWeb3Provider = async () => {
   //if metamask is installed windows will be having web3 injected
-  if (typeof web3 !== "undefined") {
-    return web3.currentProvider;
+  if (typeof ethereum !== "undefined") {
+    if(typeof web3 !== "undefined"){
+      try {
+          web3 = new Web3(ethereum);
+          // Request account access if needed
+          await ethereum.enable();
+          web3.eth.getCoinbase().then(console.log);
+          return true
+      } catch (error) {
+          return false
+      }
+    }
   }
-  //else use provider
+  // Legacy dapp browsers...
+  else if (typeof web3 !== "undefined") {
+    try {
+      console.log('Legacy dapp browser detected, fallback to deprecated api')
+      web3 = new Web3(web3.currentProvider);
+      return true
+    } catch (error) {
+        return false
+    }
+  }
+  // Non-dapp browsers can still read
   else {
-    return new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }});
+    try {
+      console.log('NO version of Metamask detected falling back to infura URL for reads')
+
+     web3 = new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }});
+      return true
+    } catch (error) {
+        return false
+    }
   }
 }
 
-web3 = new Web3(getWeb3Provider());
+const hasWeb3 = getWeb3Provider();
+if (!hasWeb3){
+  console.log("Everything failed, not connected to any network, probably an old browser")
+  
+}
 
 export { web3 };
 
