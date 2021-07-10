@@ -33,7 +33,7 @@ export const getWeb3Provider = async () => {
     try {
       console.log('NO version of Metamask detected falling back to infura URL for reads')
 
-     web3 = new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }});
+      web3 = new Web3(new Web3.providers.HttpProvider({{ allowEnvLiteral web3URL }}));
       return true
     } catch (error) {
         return false
